@@ -3,34 +3,12 @@ import os
 import csv
 
 def reverse_complement(seq):
-    """
-    Returns the reverse complement of a DNA sequence.
-    
-    Parameters:
-    - seq: The DNA sequence to reverse complement.
-    
-    Returns:
-    - The reverse complement of the sequence.
-    """
+
     complement = str.maketrans('ACGTacgt', 'TGCAtgca')
     return seq.translate(complement)[::-1]
 
 def extract_pam(sequence, sstart, send, sstrand):
-    """
-    Extract the PAM for a sequence alignment.
-    
-    For the plus strand, extract the three bases before sstart.
-    For the minus strand, extract the three bases after sstart and return the reverse complement.
-    
-    Parameters:
-    - sequence: The full sequence from the database (subject).
-    - sstart: Start position of the alignment (1-based).
-    - send: End position of the alignment (1-based).
-    - sstrand: Strand direction of the alignment ('plus' or 'minus').
-    
-    Returns:
-    - The PAM sequence (three bases).
-    """
+   
     if sstrand == 'plus':
         pam_position = sstart - 4 
         if pam_position >= 0:
@@ -43,15 +21,7 @@ def extract_pam(sequence, sstart, send, sstrand):
     return "N/A"
 
 def read_sequences(file_path):
-    """
-    Read sequences from a FASTA file and return a dictionary mapping sequence IDs to sequences.
-    
-    Parameters:
-    - file_path: Path to the FASTA file.
-    
-    Returns:
-    - A dictionary mapping sequence IDs to sequences.
-    """
+   
     sequences = {}
     print(f"Reading sequences from {file_path}...")
     
@@ -71,16 +41,7 @@ def read_sequences(file_path):
     return sequences
 
 def perform_blast(query_fasta, db_name):
-    """
-    Perform a BLAST search using a query FASTA file and a BLAST database.
     
-    Parameters:
-    - query_fasta: Path to the query FASTA file.
-    - db_name: The base name of the BLAST database.
-    
-    Returns:
-    - A temporary file with the BLAST results.
-    """
     temp_output_file = "temp_results.txt"
     
     blastn_command = [
@@ -103,18 +64,7 @@ def perform_blast(query_fasta, db_name):
     return temp_output_file
 
 def process_blast_results(temp_file, query_sequences, db_sequences):
-    """
-    Process the BLAST results, extracting relevant information and generating the PAM sequences.
-    
-    Parameters:
-    - temp_file: Path to the temporary file containing BLAST results.
-    - query_sequences: A dictionary of query sequences.
-    - db_sequences: A dictionary of database sequences.
-    
-    Returns:
-    - Two lists: one for p1656 results and one for JB028 results.
-    - A set of sequences that have already aligned to p1656.
-    """
+   
     jb028_results = []
     p1656_results = []
     aligned_to_p1656 = set()
@@ -155,15 +105,7 @@ def process_blast_results(temp_file, query_sequences, db_sequences):
     return jb028_results, p1656_results, aligned_to_p1656
 
 def write_output(jb028_results, p1656_results, aligned_to_p1656, output_file):
-    """
-    Write the BLAST results to a CSV file in the required format.
-    
-    Parameters:
-    - jb028_results: Results from the JB028 database.
-    - p1656_results: Results from the p1656 database.
-    - aligned_to_p1656: Set of sequences that have already aligned to p1656.
-    - output_file: Path to the output CSV file.
-    """
+   
     with open(output_file, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         column_headings = ["Count", "Spacer ID", "Sequence", "Database", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore", "sstrand", "PAM"]
